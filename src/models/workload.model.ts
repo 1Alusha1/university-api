@@ -10,11 +10,11 @@ const WorkLoad = new Schema({
   },
   faculty: {
     type: String,
-    required: true,
+    default: null,
   },
   course: {
     type: Number,
-    required: true,
+    default: null,
   },
   groupCode: {
     type: String,
@@ -42,11 +42,11 @@ const WorkLoad = new Schema({
   },
   lectures: {
     type: Number,
-    required: true,
+    default: null,
   },
   practicalSeminars: {
     type: Number,
-    required: true,
+    default: null,
   },
   laboratoryWork: {
     type: Number,
@@ -106,6 +106,10 @@ const WorkLoad = new Schema({
   },
   semester: {
     type: Number,
+    required: true,
+  },
+  type: {
+    type: String,
     required: true,
   },
 });

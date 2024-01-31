@@ -14,8 +14,11 @@ export const workLoadController = {
       .json({ data: result, message: "Список успішно отримано" });
   },
 
-  async createRecord(req: Request, res: Response<TresponseOneRecord>) {
-    const dto: IWorkLoad = req.body;
+  async createRecord(
+    req: RequestWithBody<IWorkLoad>,
+    res: Response<TresponseOneRecord>
+  ) {
+    const dto = req.body;
 
     const result: IWorkLoad = await workLoadRepository.createRecord(dto);
 
@@ -23,10 +26,11 @@ export const workLoadController = {
   },
 
   async updateRecord(
-    req: Request<RequestWithBody<{ dto: TrequestUpdateDTO }>>,
+    req: RequestWithBody<TrequestUpdateDTO>,
     res: Response<TresponseOneRecord>
   ) {
     let { id, field } = req.body;
+
     if (!field.value) {
       field.value = null;
     }

@@ -1,16 +1,16 @@
 export default interface IWorkLoad {
-  academicDisciplines: string;
+  academicDisciplines?: string;
   disciplinesStatus?: string | null;
-  faculty: string;
-  course: number;
-  groupCode: string;
-  studentsCount: number;
+  faculty?: string;
+  course?: number;
+  groupCode?: string;
+  studentsCount?: number;
   groupsCount?: number | null;
   subgroupsCount?: number | null;
   threadsCount?: number | null;
   totalHours?: number | null;
-  lectures: number;
-  practicalSeminars: number;
+  lectures?: number;
+  practicalSeminars?: number;
   laboratoryWork?: number | null;
   managementTermPapers?: number | null;
   practiceManagement?: number | null;
