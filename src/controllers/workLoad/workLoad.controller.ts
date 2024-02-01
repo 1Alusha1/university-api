@@ -41,6 +41,6 @@ export const workLoadController = {
 
     const result = await workLoadRepository.updateRecords(id, field);
 
-    res.status(204).json({ data: result, message: `Поле успішно оновлено` });
+    res.status(201).json({ data: result, message: `Поле успішно оновлено` });
   },
 };
