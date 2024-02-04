@@ -1,11 +1,11 @@
-import { creditsCourse } from "./types";
-
 export default interface IPlan {
+  type?: String | null;
+  subType?: String | null;
   count?: Number | null;
   codeTIN?: String | null;
   nameEducationalComponent?: String | null;
   exams?: Number | null;
-  credits?: Number | null;
+  credits?: String | null;
   courseWork?: Number | null;
   graduateWork?: Number | null;
   countCreditsECTS?: Number | null;
@@ -15,9 +15,21 @@ export default interface IPlan {
   practical?: Number | null;
   laboratory?: Number | null;
   independentWork?: Number | null;
-  creditsFirstCourse?: creditsCourse;
-  creditsSecondCourse?: creditsCourse;
-  creditsThirdthCourse?: creditsCourse;
-  creditsForthCourse?: creditsCourse;
+  ff1?: String | null;
+  ff1__1?: String | null;
+  ff2?: String | null;
+  ff2__1?: String | null;
+  ss1?: String | null;
+  ss1__1?: String | null;
+  ss2?: String | null;
+  ss2__1?: String | null;
+  tt1?: String | null;
+  tt1__1?: String | null;
+  tt2?: String | null;
+  tt2__1?: String | null;
+  th1?: String | null;
+  th1__1?: String | null;
+  th2?: String | null;
+  th2__1?: String | null;
   year?: Number | null;
 }

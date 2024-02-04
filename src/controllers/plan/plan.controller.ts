@@ -21,7 +21,7 @@ export const planController = {
 
     res.status(201).json({
       data: result,
-      message: `План для предмету: ${dto.nameEducationalComponent} додано`,
+      message: `План для предмету додано`,
     });
   },
   async updateSubjectPlanById(

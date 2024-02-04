@@ -1,5 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 const Plan = new Schema({
+  type: String,
+  subType: {
+    type: String,
+    default: null,
+  },
   count: {
     type: Number,
     default: null,
@@ -17,7 +22,7 @@ const Plan = new Schema({
     default: null,
   },
   credits: {
-    type: Number,
+    type: String,
     default: null,
   },
   courseWork: {
@@ -56,17 +61,67 @@ const Plan = new Schema({
     type: Number,
     default: null,
   },
-  /**
-   * {
-   *   weaks: 16 / 20 /8
-   *   ects:number | null
-   *   thHour: number | null
-   * }
-   */
-  creditsFirstCourse: { type: Object, default: null },
-  creditsSecondCourse: { type: Object, default: null },
-  creditsThirdthCourse: { type: Object, default: null },
-  creditsForthCourse: { type: Object, default: null },
+  ff1: {
+    type: String,
+    default: null,
+  },
+  ff1__1: {
+    type: String,
+    default: null,
+  },
+  ff2: {
+    type: String,
+    default: null,
+  },
+  ff2__1: {
+    type: String,
+    default: null,
+  },
+  ss1: {
+    type: String,
+    default: null,
+  },
+  ss1__1: {
+    type: String,
+    default: null,
+  },
+  ss2: {
+    type: String,
+    default: null,
+  },
+  ss2__1: {
+    type: String,
+    default: null,
+  },
+  tt1: {
+    type: String,
+    default: null,
+  },
+  tt1__1: {
+    type: String,
+    default: null,
+  },
+  tt2: String,
+  tt2__1: {
+    type: String,
+    default: null,
+  },
+  th1: {
+    type: String,
+    default: null,
+  },
+  th1__1: {
+    type: String,
+    default: null,
+  },
+  th2: {
+    type: String,
+    default: null,
+  },
+  th2__1: {
+    type: String,
+    default: null,
+  },
   year: Number,
 });
 
