@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { RequestWithBody } from "../../types";
-import IPlan from "./plan.inteface";
+import IPlan from "./plan.interface";
 import { PlanRepository } from "./plan.repository";
 import planModel from "../../models/plan.model";
 import { TrequestUpdateDTO } from "../workLoad/types";
@@ -41,5 +41,26 @@ export const planController = {
     const result = await PlanRepository.updateSubjectPlanById(id, field);
 
     res.status(201).json({ data: result, message: `Поле успішно оновлено` });
+  },
+  async createPlanAnnex(
+    req: RequestWithBody<{ semestr: number }>,
+    res: Response
+  ) {
+    let { semestr } = req.body;
+    if (semestr > 8) {
+      return res.status(400).json({ message: "Семестрів всього 8" });
+    }
+    let opt: any = {
+      1: "ff1",
+      2: "ff2",
+      3: "ss1",
+      4: "ss2",
+      5: "tt1",
+      6: "tt2",
+      7: "th1",
+      8: "th2",
+    };
+    let result = await PlanRepository.createPlanAnnex(opt);
+    res.status(200).json(result);
   },
 };
