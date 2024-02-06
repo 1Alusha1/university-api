@@ -3,6 +3,8 @@ import connect from "./db";
 import workLoad from "./routes/wokrLoad.route";
 import plan from "./routes/plan.route";
 import subject from "./routes/subject.route";
+import planAnnex from "./routes/planAnnex.route";
+
 import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
@@ -26,6 +28,7 @@ app.use(express.json());
 app.use(cors(options));
 app.use("/api/workload", workLoad);
 app.use("/api/plan", plan);
+app.use("/api/planAnnex", planAnnex);
 app.use("/api/subject", subject);
 
 connect(process.env.DB_URI as string);

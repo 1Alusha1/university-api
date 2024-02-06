@@ -1,6 +1,6 @@
 export default interface IPlanAnnex {
   semestr: Number;
-  parrentId: String;
+  parentId: String;
   codeTIN: String;
   nameComponent: String;
   countCredits: String;
