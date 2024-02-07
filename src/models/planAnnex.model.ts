@@ -1,15 +1,10 @@
 import mongoose, { Schema } from "mongoose";
 
-type controlForm = {
-  exam: string;
-  credit: string;
-};
-
 const PlanAnnex = new Schema({
   semestr: Number,
   parentId: { type: Schema.Types.ObjectId, ref: "Plan" },
   codeTIN: String,
-  nameComponent: String,
+  nameEducationalComponent: String,
   countCredits: String,
   totalValue: Number,
   classroom: Number,

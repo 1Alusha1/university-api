@@ -6,22 +6,7 @@ import IPlanAnnex from "./planAnnex.interface";
 export const planAnnexRepository = {
   async generatePlanAnnexTable(opt: any) {
     try {
-      let result = [];
-      let first = "";
-      let condition: any = {};
-
-      for (let i = 1; i <= 8; i++) {
-        first = opt[i];
-        condition[first] = { $ne: "" };
-        let obj = await planModel.find({
-          ...condition,
-        });
-        result.push({
-          semestr: i,
-          obj,
-        });
-        condition = {};
-      }
+      let result = await getSemestrRecords(opt);
 
       // new table planAnnex
       let planAnnex: IPlanAnnex[] = [];
@@ -31,7 +16,7 @@ export const planAnnexRepository = {
             semestr: item.semestr,
             parentId: `${elems._id}`,
             codeTIN: elems.codeTIN,
-            nameComponent: elems.nameEducationalComponent,
+            nameEducationalComponent: elems.nameEducationalComponent,
             ...getCredits(item.semestr, elems, opt),
             totalValue: elems.totalValue,
             classroom: elems.totla,
@@ -60,11 +45,36 @@ export const planAnnexRepository = {
   },
 };
 
-function getCredits(semestr: number, data: any, opt: any) {
+export async function getSemestrRecords(opt: any) {
+  let result = [];
+  let first = "";
+  let condition: any = {};
+
+  for (let i = 1; i <= 8; i++) {
+    first = opt[i];
+    condition[first] = { $ne: "" };
+    let obj = await planModel.find({
+      ...condition,
+    });
+    result.push({
+      semestr: i,
+      obj,
+    });
+    condition = {};
+  }
+
+  return result;
+}
+
+export function getCredits(semestr: number, data: any, opt: any) {
   return { countCredits: data[opt[semestr]] };
 }
 
-function getControlForm(semestr: number, data: IPlan) {
+export function getCoefficient(semestr: number, data: any, opt: any) {
+  return { countCredits: data[opt[semestr]] };
+}
+
+export function getControlForm(semestr: number, data: IPlan) {
   if (
     semestr === 1 ||
     (semestr >= 3 &&
