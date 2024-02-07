@@ -1,8 +1,6 @@
 import planModel from "../../models/plan.model";
 import IPlan from "./plan.interface";
 import { TupdateRecord } from "../workLoad/types";
-import IPlanAnnex from "../planAnnex/planAnnex.interface";
-import planAnnexModel from "../../models/planAnnex.model";
 
 export const PlanRepository = {
   async getSubjectPlan(): Promise<IPlan[]> {

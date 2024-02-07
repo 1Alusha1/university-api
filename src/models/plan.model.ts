@@ -62,64 +62,67 @@ const Plan = new Schema({
     default: null,
   },
   ff1: {
-    type: String,
+    type: Number,
     default: null,
   },
   ff1__1: {
-    type: String,
+    type: Number,
     default: null,
   },
   ff2: {
-    type: String,
+    type: Number,
     default: null,
   },
   ff2__1: {
-    type: String,
+    type: Number,
     default: null,
   },
   ss1: {
-    type: String,
+    type: Number,
     default: null,
   },
   ss1__1: {
-    type: String,
+    type: Number,
     default: null,
   },
   ss2: {
-    type: String,
+    type: Number,
     default: null,
   },
   ss2__1: {
-    type: String,
+    type: Number,
     default: null,
   },
   tt1: {
-    type: String,
+    type: Number,
     default: null,
   },
   tt1__1: {
-    type: String,
+    type: Number,
     default: null,
   },
-  tt2: String,
+  tt2: {
+    type: Number,
+    default: null,
+  },
   tt2__1: {
-    type: String,
+    type: Number,
     default: null,
   },
   th1: {
-    type: String,
+    type: Number,
     default: null,
   },
   th1__1: {
-    type: String,
+    type: Number,
     default: null,
   },
   th2: {
-    type: String,
+    type: Number,
     default: null,
   },
   th2__1: {
-    type: String,
+    type: Number,
     default: null,
   },
   year: Number,

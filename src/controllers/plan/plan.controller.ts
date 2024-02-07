@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { RequestWithBody } from "../../types";
 import IPlan from "./plan.interface";
 import { PlanRepository } from "./plan.repository";
-import planModel from "../../models/plan.model";
 import { TrequestUpdateDTO } from "../workLoad/types";
 
 export const planController = {
