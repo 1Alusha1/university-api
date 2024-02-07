@@ -4,6 +4,7 @@ import workLoad from "./routes/wokrLoad.route";
 import plan from "./routes/plan.route";
 import subject from "./routes/subject.route";
 import planAnnex from "./routes/planAnnex.route";
+import workPlan from "./routes/workPlan.route";
 
 import cors from "cors";
 import dotenv from "dotenv";
@@ -27,6 +28,7 @@ const options: cors.CorsOptions = {
 app.use(express.json());
 app.use(cors(options));
 app.use("/api/workload", workLoad);
+app.use("/api/workPlan", workPlan);
 app.use("/api/plan", plan);
 app.use("/api/planAnnex", planAnnex);
 app.use("/api/subject", subject);
