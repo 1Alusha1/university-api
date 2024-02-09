@@ -33,7 +33,7 @@ const Plan = new Schema({
     type: Number,
     default: null,
   },
-  countCreditsECTS: {
+  countCredits: {
     type: Number,
     default: null,
   },

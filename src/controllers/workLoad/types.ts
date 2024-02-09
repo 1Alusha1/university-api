@@ -7,7 +7,7 @@ export type TupdateRecord = {
 
 export type TrequestUpdateDTO = {
   id: string;
-  field: TupdateRecord;
+  field: TupdateRecord[];
 };
 
 export type TresponseArray = {

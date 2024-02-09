@@ -8,7 +8,7 @@ export default interface IPlan {
   credits?: String | null;
   courseWork?: Number | null;
   graduateWork?: Number | null;
-  countCreditsECTS?: Number | null;
+  countCredits?: Number | null;
   totalValue?: Number | null;
   total?: Number | null;
   lectures?: Number | null;
