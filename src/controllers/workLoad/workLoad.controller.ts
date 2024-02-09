@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { workLoadRepository } from "./workLoad.repository";
 import IWorkLoad from "./workLoad.interface";
 import { RequestWithBody } from "../../types";
-import { TrequestUpdateDTO, TresponseArray, TresponseOneRecord } from "./types";
+import { TrequestUpdateDTO, TresponseArray, TresponseOneRecord, TupdateRecord } from "./types";
 export const workLoadController = {
   async getRecords(req: Request, res: Response<TresponseArray>) {
     let result: IWorkLoad[] = await workLoadRepository.getRecords();
@@ -30,16 +30,19 @@ export const workLoadController = {
     res: Response<TresponseOneRecord>
   ) {
     let { id, field } = req.body;
+    let dto: any = [];
+    field.forEach((item: TupdateRecord) => {
+      if (!item.value) {
+        item.value = null;
+      }
 
-    if (!field.value) {
-      field.value = null;
-    }
+      if (typeof item.value === "string") {
+        item.value.trim();
+      }
+      dto.push(item);
+    });
 
-    if (typeof field.value === "string") {
-      field.value.trim();
-    }
-
-    const result = await workLoadRepository.updateRecords(id, field);
+    const result = await workLoadRepository.updateRecords(id, dto);
 
     res.status(201).json({ data: result, message: `Поле успішно оновлено` });
   },

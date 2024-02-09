@@ -2,6 +2,7 @@ import planModel from "../../models/plan.model";
 import planAnnexModel from "../../models/planAnnex.model";
 import IPlan from "../plan/plan.interface";
 import IPlanAnnex from "./planAnnex.interface";
+import { TrequestUpdateDTO, TupdateRecord } from "../workLoad/types";
 
 export const planAnnexRepository = {
   async generatePlanAnnexTable(opt: any) {
@@ -43,6 +44,25 @@ export const planAnnexRepository = {
       if (err) console.log(err);
     }
   },
+  async updatePlanAnnexRecordById(id: string, field: TupdateRecord[]) {
+    let obj: any = {};
+
+    field.forEach((item: TupdateRecord) => {
+      let { name, value } = item;
+
+      obj[name] = value;
+      console.log(obj);
+    });
+
+    let record: IPlan = (await planAnnexModel.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      { $set: { ...obj } },
+      { new: true }
+    ))!;
+    return record;
+  },
 };
 
 export async function getSemestrRecords(opt: any) {
@@ -75,7 +95,7 @@ export function getCredits(semestr: number, data: any, opt: any) {
   } else {
     credits = data[opt[semestr]];
   }
-  
+
   return { countCredits: credits };
 }
 

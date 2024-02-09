@@ -1,4 +1,5 @@
 import workPlanModel from "../../models/workPlan.model";
+import { TupdateRecord } from "../workLoad/types";
 import IPlan from "../plan/plan.interface";
 import {
   getCredits,
@@ -31,6 +32,26 @@ export const workPlanRepository = {
 
     // await workPlanModel.insertMany(workPlan);
     return workPlan;
+  },
+
+  async updateWorkPlanRecordById(id: string, field: TupdateRecord[]) {
+    let obj: any = {};
+
+    field.forEach((item: TupdateRecord) => {
+      let { name, value } = item;
+
+      obj[name] = value;
+      console.log(obj);
+    });
+
+    let record: IPlan = (await workPlanModel.findOneAndUpdate(
+      {
+        _id: id,
+      },
+      { $set: { ...obj } },
+      { new: true }
+    ))!;
+    return record;
   },
 };
 

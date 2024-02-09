@@ -13,17 +13,21 @@ export const workLoadRepository = {
 
     return wokrLoad;
   },
-  async updateRecords(id: string, field: TupdateRecord): Promise<IWorkLoad> {
-    let { name, value } = field;
-
+  async updateRecords(id: string, field: TupdateRecord[]): Promise<IWorkLoad> {
     let obj: any = {};
-    obj[name] = value;
 
-    let record: IWorkLoad = (await workloadModel.findOneAndUpdate(
+    field.forEach((item: TupdateRecord) => {
+      let { name, value } = item;
+
+      obj[name] = value;
+      console.log(obj);
+    });
+
+    let record = (await workloadModel.findOneAndUpdate(
       {
         _id: id,
       },
-      { $set: obj },
+      { $set: { ...obj } },
       { new: true }
     ))!;
     return record;

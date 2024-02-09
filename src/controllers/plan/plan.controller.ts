@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { RequestWithBody } from "../../types";
 import IPlan from "./plan.interface";
 import { PlanRepository } from "./plan.repository";
-import { TrequestUpdateDTO } from "../workLoad/types";
+import { TrequestUpdateDTO, TupdateRecord } from "../workLoad/types";
 
 export const planController = {
   async getSubjectPlan(req: Request, res: Response) {
@@ -28,16 +28,19 @@ export const planController = {
     res: Response
   ) {
     let { id, field } = req.body;
+    let dto: any = [];
+    field.forEach((item: TupdateRecord) => {
+      if (!item.value) {
+        item.value = null;
+      }
 
-    if (!field.value) {
-      field.value = null;
-    }
+      if (typeof item.value === "string") {
+        item.value.trim();
+      }
+      dto.push(item);
+    });
 
-    if (typeof field.value === "string") {
-      field.value.trim();
-    }
-
-    const result = await PlanRepository.updateSubjectPlanById(id, field);
+    const result = await PlanRepository.updateSubjectPlanById(id, dto);
 
     res.status(201).json({ data: result, message: `Поле успішно оновлено` });
   },

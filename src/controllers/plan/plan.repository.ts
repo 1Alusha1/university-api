@@ -12,23 +12,23 @@ export const PlanRepository = {
     return plan;
   },
 
-  async updateSubjectPlanById(
-    id: string,
-    field: TupdateRecord
-  ): Promise<IPlan> {
-    let { name, value } = field;
-
+  async updateSubjectPlanById(id: string, field: TupdateRecord[]) {
     let obj: any = {};
-    obj[name] = value;
+    
+    field.forEach((item: TupdateRecord) => {
+      let { name, value } = item;
+
+      obj[name] = value;
+      console.log(obj);
+    });
 
     let record: IPlan = (await planModel.findOneAndUpdate(
       {
         _id: id,
       },
-      { $set: obj },
+      { $set: { ...obj } },
       { new: true }
     ))!;
     return record;
   },
 };
-
