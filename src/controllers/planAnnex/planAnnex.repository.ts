@@ -67,7 +67,16 @@ export async function getSemestrRecords(opt: any) {
 }
 
 export function getCredits(semestr: number, data: any, opt: any) {
-  return { countCredits: data[opt[semestr]] };
+  let credits: any;
+  let condition = semestr + 1 >= 8 ? 8 : semestr + 1;
+
+  if (data[opt[semestr]] && data[opt[condition]]) {
+    credits = data[opt[semestr]] + data[opt[condition]];
+  } else {
+    credits = data[opt[semestr]];
+  }
+  
+  return { countCredits: credits };
 }
 
 export function getCoefficient(semestr: number, data: any, opt: any) {

@@ -20,8 +20,8 @@ export const workPlanRepository = {
           parentId: `${item._id}`,
           nameEducationalComponent: item.nameEducationalComponent,
           ...getCredits(semestr, item, opt),
-          totalValue: item.countCreditsECTS * 30,
-          behindCurriculum: item.totalValue,
+          totalValue: getCredits(semestr, item, opt).countCredits * 30,
+          behindCurriculum: getCredits(semestr, item, opt).countCredits * 30,
           readInPrevious: null,
           forSchoolYear: getCredits(semestr, item, opt).countCredits * 30,
           ...calculatePartSemestr(semestr, item, opt),
@@ -29,7 +29,7 @@ export const workPlanRepository = {
       });
     });
 
-    await workPlanModel.insertMany(workPlan);
+    // await workPlanModel.insertMany(workPlan);
     return workPlan;
   },
 };
@@ -41,14 +41,12 @@ function calculatePartSemestr(semestr: number, data: any, opt: any) {
     data[opt[`c${semestr}`]],
     data[opt[`c${semestr + 1}`]],
   ];
-  let credits: [number, number] = [data[opt[condition]], data[opt[semestr]]];
-
+  let credits: [number, number] = [data[opt[semestr]], data[opt[condition]]];
   let dto: TTuppleDto = {
     week,
     coefficient,
     credits,
   };
-
   let result: TGeneratedWorkPlanResult;
   if (data[opt[semestr]] && data[opt[semestr + 1]]) {
     result = {
@@ -108,17 +106,15 @@ function setHalfValue(
         lectures: (tuples.coefficient[count] * tuples.week[count]) / 2,
         practical: (tuples.coefficient[count] * tuples.week[count]) / 2,
       };
-
   result = {
     totalHours: tuples.coefficient[count] * tuples.week[count],
     ...condition,
     laboratory: 0,
-    independentWork: isNagative(
+    independentWork:
       tuples.credits[count] * 30 -
-        tuples.coefficient[count] * tuples.week[count]
-    ),
+      tuples.coefficient[count] * tuples.week[count],
     graduateWork: 0,
-    controlForm: getControlForm(semestr, data),
+    ...getControlForm(semestr, data),
   };
 
   return result;
