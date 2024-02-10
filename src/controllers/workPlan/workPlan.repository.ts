@@ -7,6 +7,7 @@ import {
   getControlForm,
 } from "../planAnnex/planAnnex.repository";
 import { TGeneratedWorkPlanResult, THalfSemestr, TTuppleDto } from "./types";
+import { createUpdateObject } from "../../utils/utils";
 
 export const workPlanRepository = {
   async generateWorkPlan(opt: any) {
@@ -22,7 +23,7 @@ export const workPlanRepository = {
           nameEducationalComponent: item.nameEducationalComponent,
           ...getCredits(semestr, item, opt),
           totalValue: getCredits(semestr, item, opt).countCredits * 30,
-          behindCurriculum: getCredits(semestr, item, opt).countCredits * 30,
+          behindCurriculum: item.countCredits * 30,
           readInPrevious: null,
           forSchoolYear: getCredits(semestr, item, opt).countCredits * 30,
           ...calculatePartSemestr(semestr, item, opt),
@@ -35,15 +36,7 @@ export const workPlanRepository = {
   },
 
   async updateWorkPlanRecordById(id: string, field: TupdateRecord[]) {
-    let obj: any = {};
-
-    field.forEach((item: TupdateRecord) => {
-      let { name, value } = item;
-
-      obj[name] = value;
-      console.log(obj);
-    });
-
+    let obj = createUpdateObject(field);
     let record: IPlan = (await workPlanModel.findOneAndUpdate(
       {
         _id: id,

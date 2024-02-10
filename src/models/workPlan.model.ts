@@ -2,6 +2,8 @@ import mongoose, { Schema } from "mongoose";
 
 const WorkPlan = new Schema({
   semestr: Number,
+  facylty: String,
+  group: String,
   count: Number,
   parentId: { type: Schema.Types.ObjectId, ref: "Plan" },
   nameEducationalComponent: String,
