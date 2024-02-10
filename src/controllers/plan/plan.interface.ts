@@ -1,6 +1,8 @@
 export default interface IPlan {
   type?: String | null;
   subType?: String | null;
+  faculty?: String | null,
+  group?: String | null,
   count?: Number | null;
   codeTIN?: String | null;
   nameEducationalComponent?: String | null;
@@ -30,6 +32,6 @@ export default interface IPlan {
   th1?: Number | null;
   th1__1?: Number | null;
   th2?: Number | null;
-  th2__1?: Number | null;
+  th2__1?: Number | String | null;
   year?: Number | null;
 }
