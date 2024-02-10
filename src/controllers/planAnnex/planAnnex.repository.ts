@@ -3,6 +3,8 @@ import planAnnexModel from "../../models/planAnnex.model";
 import IPlan from "../plan/plan.interface";
 import IPlanAnnex from "./planAnnex.interface";
 import { TrequestUpdateDTO, TupdateRecord } from "../workLoad/types";
+import { createUpdateObject } from "../../utils/utils";
+import { TTuppleDto } from "../workPlan/types";
 
 export const planAnnexRepository = {
   async generatePlanAnnexTable(opt: any) {
@@ -13,31 +15,64 @@ export const planAnnexRepository = {
       let planAnnex: IPlanAnnex[] = [];
       result.forEach((item) => {
         item.obj.forEach((elems) => {
+          let exceptions: any = {};
+          let coefficient = getCoefficient(
+            item.semestr,
+            elems,
+            opt
+          ).coefficient;
+          let week = getWeek(item.semestr, elems, opt).week;
+          if (elems.nameEducationalComponent === "Вступ до фаху") {
+            exceptions = {
+              lectures: coefficient * week - (coefficient * week) / 4,
+              practical: (coefficient * week) / 4,
+            };
+          } else {
+            exceptions = null;
+          }
+          if (elems.nameEducationalComponent === "Фахова іноземна мова") {
+            exceptions = {
+              lectures: null,
+              practical: coefficient * week,
+            };
+          } else {
+            exceptions = null;
+          }
+          let condition = exceptions
+            ? exceptions
+            : {
+                lectures: (coefficient * week) / 2,
+                practical: (coefficient * week) / 2,
+              };
           planAnnex.push({
             semestr: item.semestr,
             parentId: `${elems._id}`,
             codeTIN: elems.codeTIN,
             nameEducationalComponent: elems.nameEducationalComponent,
-            ...getCredits(item.semestr, elems, opt),
-            totalValue: elems.totalValue,
-            classroom: elems.totla,
-            lectures: elems.lectures,
-            practical: elems.practical,
+            ...getCourseCredits(item.semestr, elems, opt),
+            totalValue:
+              getCourseCredits(item.semestr, elems, opt).countCredits * 30,
+            classroom:
+              getWeek(item.semestr, elems, opt).week *
+              getCoefficient(item.semestr, elems, opt).coefficient,
+            ...condition,
             laboratory: elems.laboratory,
             ...getControlForm(item.semestr, elems),
             totalHours: elems.totalValue,
             readInPrevious: 0,
             competencies: "",
             programResults: "",
+            faculty: `${elems.faculty}`,
+            group: `${elems.group}`,
           });
         });
       });
 
-      const annex = await planAnnexModel.find();
-      if (annex.length) {
-        return { message: "Додаток вже створенний" };
-      }
-      await planAnnexModel.insertMany(planAnnex);
+      // const annex = await planAnnexModel.find();
+      // if (annex.length) {
+      //   return { message: "Додаток вже створенний" };
+      // }
+      // await planAnnexModel.insertMany(planAnnex);
 
       return planAnnex;
     } catch (err) {
@@ -45,14 +80,7 @@ export const planAnnexRepository = {
     }
   },
   async updatePlanAnnexRecordById(id: string, field: TupdateRecord[]) {
-    let obj: any = {};
-
-    field.forEach((item: TupdateRecord) => {
-      let { name, value } = item;
-
-      obj[name] = value;
-      console.log(obj);
-    });
+    let obj = createUpdateObject(field);
 
     let record: IPlan = (await planAnnexModel.findOneAndUpdate(
       {
@@ -99,9 +127,19 @@ export function getCredits(semestr: number, data: any, opt: any) {
   return { countCredits: credits };
 }
 
-export function getCoefficient(semestr: number, data: any, opt: any) {
+export function getCourseCredits(semestr: number, data: any, opt: any) {
   return { countCredits: data[opt[semestr]] };
 }
+
+export function getCoefficient(semestr: number, data: any, opt: any) {
+  return { coefficient: data[opt[`c${semestr}`]] };
+}
+
+export function getWeek(semestr: number, data: any, opt: any) {
+  return { week: opt[opt[semestr]] };
+}
+
+export function setLectureAndPractical() {}
 
 export function getControlForm(semestr: number, data: IPlan) {
   if (
