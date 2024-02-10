@@ -1,6 +1,7 @@
 import workloadModel from "../../models/workload.model";
 import IWorkLoad from "./workLoad.interface";
 import { TupdateRecord } from "./types";
+import { createUpdateObject } from "../../utils/utils";
 export const workLoadRepository = {
   async getRecords(): Promise<IWorkLoad[]> {
     let result: IWorkLoad[] = await workloadModel.find();
@@ -14,15 +15,7 @@ export const workLoadRepository = {
     return wokrLoad;
   },
   async updateRecords(id: string, field: TupdateRecord[]): Promise<IWorkLoad> {
-    let obj: any = {};
-
-    field.forEach((item: TupdateRecord) => {
-      let { name, value } = item;
-
-      obj[name] = value;
-      console.log(obj);
-    });
-
+    let obj = createUpdateObject(field);
     let record = (await workloadModel.findOneAndUpdate(
       {
         _id: id,
