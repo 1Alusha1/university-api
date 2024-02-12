@@ -2,8 +2,10 @@ import { THalfSemestr } from "./types";
 
 export interface IWorkPlan {
   semestr: Number;
-  facylty: String,
-  group: String,
+  planName: String;
+  specialty: String;
+  facylty: String;
+  group: String;
   parentId: String;
   count: Number;
   nameEducationalComponent: String;

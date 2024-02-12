@@ -3,9 +3,10 @@ import mongoose, { Schema } from "mongoose";
 const WorkPlan = new Schema({
   semestr: Number,
   facylty: String,
+  specialty:String,
   group: String,
   count: Number,
-  parentId: { type: Schema.Types.ObjectId, ref: "Plan" },
+  planName: String,
   nameEducationalComponent: String,
   countCredits: String,
   totalValue: Number,
@@ -13,7 +14,7 @@ const WorkPlan = new Schema({
   forSchoolYear: Number,
 
   firstHalf: Object,
-    /**classroom: Number,
+  /**classroom: Number,
 
     totalHours: Number,
     lectures: {

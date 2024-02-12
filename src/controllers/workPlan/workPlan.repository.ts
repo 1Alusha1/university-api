@@ -1,6 +1,8 @@
 import workPlanModel from "../../models/workPlan.model";
 import { TupdateRecord } from "../workLoad/types";
 import IPlan from "../plan/plan.interface";
+import { planNameRepository } from "../planName/planName.repository";
+
 import {
   getCredits,
   getSemestrRecords,
@@ -14,10 +16,12 @@ export const workPlanRepository = {
     let records = await getSemestrRecords(opt);
 
     let workPlan: any = [];
+    let planName: string = "";
     records.forEach(({ semestr, obj }) => {
       obj.forEach((item) => {
         workPlan.push({
           semestr: semestr,
+          planName: item.planName,
           count: item.count,
           parentId: `${item._id}`,
           nameEducationalComponent: item.nameEducationalComponent,
@@ -28,11 +32,22 @@ export const workPlanRepository = {
           forSchoolYear: getCredits(semestr, item, opt).countCredits * 30,
           ...calculatePartSemestr(semestr, item, opt),
         });
+        planName = item.planName as string;
       });
     });
+    let pn = await planNameRepository.getPlanName(planName);
 
-    // await workPlanModel.insertMany(workPlan);
-    return workPlan;
+    if (pn?.workPlanName == `work plan ${planName}`) {
+      return { message: "Робочий навчальний план вже був згенерований" };
+    }
+    if (!pn?.workPlanName) {
+      planNameRepository.updatePlanName(planName, {
+        name: "workPlanName",
+        value: `work plan ${planName}`,
+      });
+      await workPlanModel.insertMany(workPlan);
+    }
+    return { message: "Робочий навчальний план згенерований до плану", data: workPlan };
   },
 
   async updateWorkPlanRecordById(id: string, field: TupdateRecord[]) {
