@@ -5,6 +5,7 @@ import plan from "./routes/plan.route";
 import subject from "./routes/subject.route";
 import planAnnex from "./routes/planAnnex.route";
 import workPlan from "./routes/workPlan.route";
+import planName from "./routes/planName.route";
 
 import cors from "cors";
 import dotenv from "dotenv";
@@ -32,6 +33,7 @@ app.use("/api/workPlan", workPlan);
 app.use("/api/plan", plan);
 app.use("/api/planAnnex", planAnnex);
 app.use("/api/subject", subject);
+app.use("/api/planName", planName);
 
 connect(process.env.DB_URI as string);
 app.listen(process.env.PORT, () => console.log("server was start"));

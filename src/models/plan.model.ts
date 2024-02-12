@@ -5,7 +5,9 @@ const Plan = new Schema({
     type: String,
     default: null,
   },
-  faculty: String,
+  planName: String,
+  specialty: { type: String, default: null },
+  faculty: { type: String, default: null },
   group: String,
   count: {
     type: Number,
