@@ -2,9 +2,9 @@ import planModel from "../../models/plan.model";
 import planAnnexModel from "../../models/planAnnex.model";
 import IPlan from "../plan/plan.interface";
 import IPlanAnnex from "./planAnnex.interface";
-import { TrequestUpdateDTO, TupdateRecord } from "../workLoad/types";
+import {  TupdateRecord } from "../workLoad/types";
 import { createUpdateObject } from "../../utils/utils";
-import { TTuppleDto } from "../workPlan/types";
+import { planNameRepository } from "../planName/planName.repository";
 
 export const planAnnexRepository = {
   async generatePlanAnnexTable(opt: any) {
@@ -13,6 +13,7 @@ export const planAnnexRepository = {
 
       // new table planAnnex
       let planAnnex: IPlanAnnex[] = [];
+      let planName: string = "";
       result.forEach((item) => {
         item.obj.forEach((elems) => {
           let exceptions: any = {};
@@ -49,6 +50,7 @@ export const planAnnexRepository = {
             parentId: `${elems._id}`,
             codeTIN: elems.codeTIN,
             nameEducationalComponent: elems.nameEducationalComponent,
+            planName: elems.planName,
             ...getCourseCredits(item.semestr, elems, opt),
             totalValue:
               getCourseCredits(item.semestr, elems, opt).countCredits * 30,
@@ -65,16 +67,23 @@ export const planAnnexRepository = {
             faculty: `${elems.faculty}`,
             group: `${elems.group}`,
           });
+          planName = elems.planName as string;
         });
       });
 
-      // const annex = await planAnnexModel.find();
-      // if (annex.length) {
-      //   return { message: "Додаток вже створенний" };
-      // }
-      // await planAnnexModel.insertMany(planAnnex);
+      let pn = await planNameRepository.getPlanName(planName);
 
-      return planAnnex;
+      if (pn?.planAnnexName == `annex ${planName}`) {
+        return { message: "Додаток до плану вже був згенерований" };
+      }
+      if (!pn?.planAnnexName) {
+        planNameRepository.updatePlanName(planName, {
+          name: "planAnnexName",
+          value: `annex ${planName}`,
+        });
+        await planAnnexModel.insertMany(planAnnex);
+      }
+      return { message: "Додаток згенерований до плану", data: planAnnex };
     } catch (err) {
       if (err) console.log(err);
     }
@@ -132,7 +141,14 @@ export function getCourseCredits(semestr: number, data: any, opt: any) {
 }
 
 export function getCoefficient(semestr: number, data: any, opt: any) {
-  return { coefficient: data[opt[`c${semestr}`]] };
+  if (data[opt[`c${semestr}`]] === "") {
+    data[opt[`c${semestr}`]] = 1;
+  }
+  if (data[opt[`c${semestr}`]] === "**") {
+    data[opt[`c${semestr}`]] = 1;
+  }
+
+  return { coefficient: Number(data[opt[`c${semestr}`]]) };
 }
 
 export function getWeek(semestr: number, data: any, opt: any) {

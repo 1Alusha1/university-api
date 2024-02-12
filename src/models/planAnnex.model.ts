@@ -3,8 +3,9 @@ import mongoose, { Schema } from "mongoose";
 const PlanAnnex = new Schema({
   semestr: Number,
   facylty: String,
+  specialty:String,
   group: String,
-  parentId: { type: Schema.Types.ObjectId, ref: "Plan" },
+  planName: String,
   codeTIN: String,
   nameEducationalComponent: String,
   countCredits: String,
