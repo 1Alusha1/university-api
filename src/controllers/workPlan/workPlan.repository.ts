@@ -7,21 +7,20 @@ import {
   getCredits,
   getSemestrRecords,
   getControlForm,
-} from "../planAnnex/planAnnex.repository";
+} from "../../utils/utils";
 import { TGeneratedWorkPlanResult, THalfSemestr, TTuppleDto } from "./types";
 import { createUpdateObject } from "../../utils/utils";
 
 export const workPlanRepository = {
-  async generateWorkPlan(opt: any) {
-    let records = await getSemestrRecords(opt);
+  async generateWorkPlan(opt: any, planName: string) {
+    let records = await getSemestrRecords(opt, planName);
 
     let workPlan: any = [];
-    let planName: string = "";
     records.forEach(({ semestr, obj }) => {
       obj.forEach((item) => {
         workPlan.push({
           semestr: semestr,
-          planName: item.planName,
+          planName: `робочий план ${item.planName}`,
           count: item.count,
           parentId: `${item._id}`,
           nameEducationalComponent: item.nameEducationalComponent,
@@ -32,24 +31,29 @@ export const workPlanRepository = {
           forSchoolYear: getCredits(semestr, item, opt).countCredits * 30,
           ...calculatePartSemestr(semestr, item, opt),
         });
-        planName = item.planName as string;
       });
     });
     let pn = await planNameRepository.getPlanName(planName);
 
-    if (pn?.workPlanName == `work plan ${planName}`) {
+    if (pn?.workPlanName == `робочий план ${planName}`) {
       return { message: "Робочий навчальний план вже був згенерований" };
     }
     if (!pn?.workPlanName) {
       planNameRepository.updatePlanName(planName, {
         name: "workPlanName",
-        value: `work plan ${planName}`,
+        value: `робочий план ${planName}`,
       });
       await workPlanModel.insertMany(workPlan);
     }
-    return { message: "Робочий навчальний план згенерований до плану", data: workPlan };
+    return {
+      message: "Робочий навчальний план згенерованно",
+      data: workPlan,
+    };
   },
-
+  async getWorkPlan() {
+    let result = await workPlanModel.find();
+    return result;
+  },
   async updateWorkPlanRecordById(id: string, field: TupdateRecord[]) {
     let obj = createUpdateObject(field);
     let record: IPlan = (await workPlanModel.findOneAndUpdate(
@@ -60,6 +64,13 @@ export const workPlanRepository = {
       { new: true }
     ))!;
     return record;
+  },
+  async getWorkPlanByName(planName: string) {
+    let plan = await workPlanModel.find({ planName: planName });
+    if (!plan.length) {
+      return { message: "Плану з такою назвою немає" };
+    }
+    return { data: plan, message: "план успішно отримано" };
   },
 };
 
@@ -76,18 +87,21 @@ function calculatePartSemestr(semestr: number, data: any, opt: any) {
     coefficient,
     credits,
   };
-  let result: TGeneratedWorkPlanResult;
-  if (data[opt[semestr]] && data[opt[semestr + 1]]) {
+  let result: any = {};
+
+  if (data[opt[`s${semestr}`][0]] && data[opt[`s${semestr}`][0]]) {
     result = {
       firstHalf: setHalfValue("f", dto, data, semestr),
       secondHalf: setHalfValue("s", dto, data, semestr),
     };
-  } else if (data[opt[semestr]] && !data[opt[semestr + 1]]) {
+  }
+  if (data[opt[`s${semestr}`][0]] && !data[opt[`s${semestr}`][1]]) {
     result = {
       firstHalf: setHalfValue("f", dto, data, semestr),
       secondHalf: null,
     };
-  } else {
+  }
+  if (!data[opt[`s${semestr}`][0]] && data[opt[`s${semestr}`][1]]) {
     result = {
       firstHalf: null,
       secondHalf: setHalfValue("s", dto, data, semestr),
@@ -112,14 +126,13 @@ function setHalfValue(
   if (data.nameEducationalComponent === "Вступ до фаху") {
     exceptions = {
       lectures:
-        tuples.coefficient[count] * tuples.week[count] -
-        (tuples.coefficient[count] * tuples.week[count]) / 4,
-      practical: (tuples.coefficient[count] * tuples.week[count]) / 4,
+        tuples.coefficient[0] * tuples.week[0] -
+        (tuples.coefficient[0] * tuples.week[0]) / 4,
+      practical: (tuples.coefficient[0] * tuples.week[0]) / 4,
     };
   } else {
     exceptions = null;
   }
-
   if (data.nameEducationalComponent === "Фахова іноземна мова") {
     exceptions = {
       lectures: null,
@@ -132,16 +145,15 @@ function setHalfValue(
   let condition = exceptions
     ? exceptions
     : {
-        lectures: (tuples.coefficient[count] * tuples.week[count]) / 2,
-        practical: (tuples.coefficient[count] * tuples.week[count]) / 2,
+        lectures: (tuples.coefficient[0] * tuples.week[0]) / 2,
+        practical: (tuples.coefficient[0] * tuples.week[0]) / 2,
       };
   result = {
-    totalHours: tuples.coefficient[count] * tuples.week[count],
+    totalHours: tuples.coefficient[0] * tuples.week[0],
     ...condition,
     laboratory: 0,
     independentWork:
-      tuples.credits[count] * 30 -
-      tuples.coefficient[count] * tuples.week[count],
+      tuples.credits[0] * 30 - tuples.coefficient[0] * tuples.week[0],
     graduateWork: 0,
     ...getControlForm(semestr, data),
   };
