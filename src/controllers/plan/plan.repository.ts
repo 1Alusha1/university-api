@@ -25,4 +25,20 @@ export const PlanRepository = {
     ))!;
     return record;
   },
+  async planInserMany(data: IPlan) {
+    try {
+      await planModel.insertMany(data);
+      return { message: "План успішно додано" };
+    } catch (err) {
+      if (err) console.log(err);
+      return { message: "Сталася помилка при додаванні плану з файлу" };
+    }
+  },
+  async getSubjectPlanByName(planName: string) {
+    let plan = await planModel.find({ planName: planName });
+    if (!plan.length) {
+      return { message: "Плану з такою назвою немає" };
+    }
+    return { data: plan, message: "план успішно отримано" };
+  },
 };

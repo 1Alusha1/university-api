@@ -8,6 +8,8 @@ const Plan = new Schema({
   planName: String,
   specialty: { type: String, default: null },
   faculty: { type: String, default: null },
+  studyType: { type: String, default: null },
+  studyForm: { type: String, default: null },
   group: String,
   count: {
     type: Number,
@@ -22,7 +24,7 @@ const Plan = new Schema({
     default: null,
   },
   exams: {
-    type: Number,
+    type: String,
     default: null,
   },
   credits: {
@@ -45,7 +47,7 @@ const Plan = new Schema({
     type: Number,
     default: null,
   },
-  totla: {
+  total: {
     type: Number,
     default: null,
   },
@@ -66,70 +68,71 @@ const Plan = new Schema({
     default: null,
   },
   ff1: {
-    type: Number,
+    type: String,
     default: null,
   },
   ff1__1: {
-    type: Number,
+    type: String,
     default: null,
   },
   ff2: {
-    type: Number,
+    type: String,
     default: null,
   },
   ff2__1: {
-    type: Number,
+    type: String,
     default: null,
   },
   ss1: {
-    type: Number,
+    type: String,
     default: null,
   },
   ss1__1: {
-    type: Number,
+    type: String,
     default: null,
   },
   ss2: {
-    type: Number,
+    type: String,
     default: null,
   },
   ss2__1: {
-    type: Number,
+    type: String,
     default: null,
   },
   tt1: {
-    type: Number,
+    type: String,
     default: null,
   },
   tt1__1: {
-    type: Number,
+    type: String,
     default: null,
   },
   tt2: {
-    type: Number,
+    type: String,
     default: null,
   },
   tt2__1: {
-    type: Number,
+    type: String,
     default: null,
   },
   th1: {
-    type: Number,
+    type: String,
     default: null,
   },
   th1__1: {
-    type: Number,
+    type: String,
     default: null,
   },
   th2: {
-    type: Number,
+    type: String,
     default: null,
   },
   th2__1: {
     type: String,
     default: null,
   },
-  year: Number,
+  year: String,
+  week: String,
 });
 
 export default mongoose.model("Plan", Plan);

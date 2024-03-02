@@ -5,7 +5,7 @@ import { PlanRepository } from "./plan.repository";
 import { TrequestUpdateDTO, TupdateRecord } from "../workLoad/types";
 
 export const planController = {
-  async getSubjectPlan(req: Request, res: Response) {
+  async getSubjectPlan(req: RequestWithBody<{ name: string }>, res: Response) {
     let result: IPlan[] = await PlanRepository.getSubjectPlan();
     if (!result.length) {
       return res.status(404).json({ message: "Записи відсутні" });
@@ -43,5 +43,17 @@ export const planController = {
     const result = await PlanRepository.updateSubjectPlanById(id, dto);
 
     res.status(201).json({ data: result, message: `Поле успішно оновлено` });
+  },
+  async getSubjectPlanByName(
+    req: RequestWithBody<{ planName: string }>,
+    res: Response
+  ) {
+    const { planName } = req.body;
+    if (!planName) {
+      return res.status(400).json({ message: "Потриібно вказати назву плану" });
+    }
+    let result = await PlanRepository.getSubjectPlanByName(planName);
+
+    return res.status(200).json(result);
   },
 };
