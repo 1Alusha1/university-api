@@ -25,7 +25,7 @@ export const PlanRepository = {
     ))!;
     return record;
   },
-  async planInserMany(data: IPlan) {
+  async planInsertMany(data: IPlan) {
     try {
       await planModel.insertMany(data);
       return { message: "План успішно додано" };

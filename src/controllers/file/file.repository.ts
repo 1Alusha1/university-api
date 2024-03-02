@@ -25,7 +25,7 @@ export const fileRepository = {
           );
 
           await planNameRepository.createPlanName({ planName });
-          await PlanRepository.planInserMany(modifiedObjectsArray as IPlan);
+          await PlanRepository.planInsertMany(modifiedObjectsArray as IPlan);
           fs.unlinkSync(filePath);
           result = "План успішно додано";
         } else {
