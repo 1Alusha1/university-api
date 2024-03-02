@@ -3,7 +3,9 @@ import { planAnnexController } from "../controllers/planAnnex/planAnnex.controll
 
 const router = Router();
 
-router.get("/", planAnnexController.generatePlanAnnexTable);
+router.get("/", planAnnexController.getPlanAnnexTable);
+router.post("/get-plan-by-name", planAnnexController.getPlanAnnexByName);
+router.post("/generateTable", planAnnexController.generatePlanAnnexTable);
 router.patch("/updateTable", planAnnexController.updatePlanAnnexRecordById);
 
 export default router;

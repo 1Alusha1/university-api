@@ -2,18 +2,23 @@ import planModel from "../../models/plan.model";
 import planAnnexModel from "../../models/planAnnex.model";
 import IPlan from "../plan/plan.interface";
 import IPlanAnnex from "./planAnnex.interface";
-import {  TupdateRecord } from "../workLoad/types";
+import { TupdateRecord } from "../workLoad/types";
 import { createUpdateObject } from "../../utils/utils";
 import { planNameRepository } from "../planName/planName.repository";
-
+import {
+  getCourseCredits,
+  getSemestrRecords,
+  getCoefficient,
+  getWeek,
+  getControlForm,
+} from "../../utils/utils";
 export const planAnnexRepository = {
-  async generatePlanAnnexTable(opt: any) {
+  async generatePlanAnnexTable(opt: any, planName: string) {
     try {
-      let result = await getSemestrRecords(opt);
+      let result = await getSemestrRecords(opt, planName);
 
       // new table planAnnex
       let planAnnex: IPlanAnnex[] = [];
-      let planName: string = "";
       result.forEach((item) => {
         item.obj.forEach((elems) => {
           let exceptions: any = {};
@@ -45,12 +50,13 @@ export const planAnnexRepository = {
                 lectures: (coefficient * week) / 2,
                 practical: (coefficient * week) / 2,
               };
+
           planAnnex.push({
             semestr: item.semestr,
             parentId: `${elems._id}`,
             codeTIN: elems.codeTIN,
             nameEducationalComponent: elems.nameEducationalComponent,
-            planName: elems.planName,
+            planName: `додаток до плану ${elems.planName}`,
             ...getCourseCredits(item.semestr, elems, opt),
             totalValue:
               getCourseCredits(item.semestr, elems, opt).countCredits * 30,
@@ -73,13 +79,13 @@ export const planAnnexRepository = {
 
       let pn = await planNameRepository.getPlanName(planName);
 
-      if (pn?.planAnnexName == `annex ${planName}`) {
+      if (pn?.planAnnexName == `додаток до плану ${planName}`) {
         return { message: "Додаток до плану вже був згенерований" };
       }
       if (!pn?.planAnnexName) {
         planNameRepository.updatePlanName(planName, {
           name: "planAnnexName",
-          value: `annex ${planName}`,
+          value: `додаток до плану ${planName}`,
         });
         await planAnnexModel.insertMany(planAnnex);
       }
@@ -87,6 +93,10 @@ export const planAnnexRepository = {
     } catch (err) {
       if (err) console.log(err);
     }
+  },
+  async getPlanAnnexTable() {
+    let result = await planAnnexModel.find();
+    return result;
   },
   async updatePlanAnnexRecordById(id: string, field: TupdateRecord[]) {
     let obj = createUpdateObject(field);
@@ -100,89 +110,11 @@ export const planAnnexRepository = {
     ))!;
     return record;
   },
+  async getPlanAnnexByName(planName: string) {
+    let plan = await planAnnexModel.find({ planName: planName });
+    if (!plan.length) {
+      return { message: "Плану з такою назвою немає" };
+    }
+    return { data: plan, message: "план успішно отримано" };
+  },
 };
-
-export async function getSemestrRecords(opt: any) {
-  let result = [];
-  let first = "";
-  let condition: any = {};
-
-  for (let i = 1; i <= 8; i++) {
-    first = opt[i];
-    condition[first] = { $ne: "" };
-    let obj = await planModel.find({
-      ...condition,
-    });
-    result.push({
-      semestr: i,
-      obj,
-    });
-    condition = {};
-  }
-
-  return result;
-}
-
-export function getCredits(semestr: number, data: any, opt: any) {
-  let credits: any;
-  let condition = semestr + 1 >= 8 ? 8 : semestr + 1;
-
-  if (data[opt[semestr]] && data[opt[condition]]) {
-    credits = data[opt[semestr]] + data[opt[condition]];
-  } else {
-    credits = data[opt[semestr]];
-  }
-
-  return { countCredits: credits };
-}
-
-export function getCourseCredits(semestr: number, data: any, opt: any) {
-  return { countCredits: data[opt[semestr]] };
-}
-
-export function getCoefficient(semestr: number, data: any, opt: any) {
-  if (data[opt[`c${semestr}`]] === "") {
-    data[opt[`c${semestr}`]] = 1;
-  }
-  if (data[opt[`c${semestr}`]] === "**") {
-    data[opt[`c${semestr}`]] = 1;
-  }
-
-  return { coefficient: Number(data[opt[`c${semestr}`]]) };
-}
-
-export function getWeek(semestr: number, data: any, opt: any) {
-  return { week: opt[opt[semestr]] };
-}
-
-export function setLectureAndPractical() {}
-
-export function getControlForm(semestr: number, data: IPlan) {
-  if (
-    semestr === 1 ||
-    (semestr >= 3 &&
-      semestr <= 8 &&
-      data.nameEducationalComponent === "Фахова іноземна мова")
-  ) {
-    return {
-      controlForm: {
-        exam: "",
-        credit: "З",
-      },
-    };
-  } else {
-    return data.exams
-      ? {
-          controlForm: {
-            exam: "Е",
-            credit: "",
-          },
-        }
-      : {
-          controlForm: {
-            exam: "",
-            credit: "З",
-          },
-        };
-  }
-}

@@ -4,17 +4,22 @@ import { planAnnexRepository } from "./planAnnex.repository";
 import { opt } from "../../option";
 import planAnnexModel from "../../models/planAnnex.model";
 import { TrequestUpdateDTO, TupdateRecord } from "../workLoad/types";
+import { workLoadRepository } from "../workLoad/workLoad.repository";
 export const planAnnexController = {
   async generatePlanAnnexTable(
-    req: RequestWithBody<{ semestr: number }>,
+    req: RequestWithBody<{ planName: string }>,
     res: Response
   ) {
-    let { semestr } = req.body;
-    if (semestr > 8) {
-      return res.status(400).json({ message: "Семестрів всього 8" });
+    let { planName } = req.body;
+
+    if (!planName) {
+      return res.status(400).json({ message: "Потрібно вказати назву плану" });
     }
 
-    let result = await planAnnexRepository.generatePlanAnnexTable(opt);
+    let result = await planAnnexRepository.generatePlanAnnexTable(
+      opt,
+      planName
+    );
     res.status(200).json(result);
   },
 
@@ -38,5 +43,21 @@ export const planAnnexController = {
     const result = await planAnnexRepository.updatePlanAnnexRecordById(id, dto);
 
     res.status(201).json({ data: result, message: `Поле успішно оновлено` });
+  },
+  async getPlanAnnexTable(req: Request, res: Response) {
+    let result = await planAnnexRepository.getPlanAnnexTable();
+    res.status(200).json({ data: result });
+  },
+  async getPlanAnnexByName(
+    req: RequestWithBody<{ planName: string }>,
+    res: Response
+  ) {
+    const { planName } = req.body;
+    if (!planName) {
+      return res.status(400).json({ message: "Потриібно вказати назву плану" });
+    }
+    let result = await planAnnexRepository.getPlanAnnexByName(planName);
+
+    return res.status(200).json(result);
   },
 };
