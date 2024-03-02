@@ -5,7 +5,6 @@ import { planNameRepository } from "./planName.repository";
 import { TupdateRecord } from "../workLoad/types";
 export const planNameController = {
   async createPlanName(req: Request, res: Response) {
-    console.log(req.body);
     let result = await planNameRepository.createPlanName(req.body);
     res.json(result);
   },
@@ -24,5 +23,12 @@ export const planNameController = {
     let { name } = req.query;
     let result = await planNameRepository.getPlanName(name);
     res.status(200).json(result);
+  },
+  async getAllNames(req: Request, res: Response) {
+    let result = await planNameRepository.getAllNames();
+    if (!result.length) {
+      return res.status(404).json({ message: "Плани відсутні" });
+    }
+    res.status(200).json({ data: result });
   },
 };

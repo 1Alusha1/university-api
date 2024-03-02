@@ -31,7 +31,10 @@ export const planNameRepository = {
     const planName = await planNameModel.findOne({
       planName: name,
     });
-
     return planName;
+  },
+  async getAllNames() {
+    const result = await planNameModel.find();
+    return result;
   },
 };
